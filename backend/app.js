@@ -3,6 +3,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const config = require("./config.js");
 
 const userRoutes = require("./routes/user");
 const saucesRoutes = require("./routes/sauces");
@@ -12,7 +13,7 @@ const app = express();
 
 mongoose
   .connect(
-    `mongodb+srv://saezito:SZfamily66@cluster0.mjtbt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    `mongodb+srv://${config.MONGO_DB_USERNAME}:${config.MONGO_DB_PASSWORD}@cluster0.mjtbt.mongodb.net/${config.MONGO_DB_NAME}?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
