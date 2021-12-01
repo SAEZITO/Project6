@@ -20,7 +20,6 @@ exports.createSauce = (req, res, next) => {
       .catch((error) => {
         res.status(400).json({ message: error });
       });
-    next();
   } else {
     res.status(401).json({ error: "userId non valable" });
   }

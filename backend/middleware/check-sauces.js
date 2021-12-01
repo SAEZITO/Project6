@@ -1,6 +1,7 @@
 //----------------------- sécuriser la validation des champs remplis par l'utilisateur pour la creation d'une sauce -----------------------//
-
+const Sauce = require("../models/Sauce");
 const Ajv = require("ajv");
+const { required } = require("nodemon/lib/config");
 const ajv = new Ajv({ allErrors: true });
 
 const sauceSchema = {
@@ -17,7 +18,7 @@ const sauceSchema = {
     userId: { type: "string" },
     name: {
       type: "string",
-      pattern: "^([a-zA-Z0-9]).{3,20}$",
+      pattern: "^([a-zA-Z0-9]).{1,20}$",
     },
     manufacturer: {
       type: "string",
@@ -41,19 +42,38 @@ const sauceSchema = {
     usersLiked: { type: ["string"] },
     usersDisliked: { type: ["string"] },
   },
+
   additionalProperties: false,
 };
 
 const validate = ajv.compile(sauceSchema);
 
 module.exports = (req, res, next) => {
-  const valid = validate(req.body);
-  if (!valid) {
-    res.status(400).json({
-      error: "Invalide : l'un des champs est mal rempli",
-    });
-    console.log(validate.errors);
+  if (req.body.sauce) {
+    const sauceObject = {
+      ...JSON.parse(req.body.sauce),
+      imageUrl: `${req.protocol}://${req.get("host")}/images/${
+        req.file.filename
+      }`,
+    };
+    const valid = validate(sauceObject);
+    if (!valid) {
+      res.status(400).json({
+        error: "Invalide : l'un des champs est mal rempli",
+      });
+      console.log(validate.errors);
+    } else {
+      next();
+    }
   } else {
-    next();
+    const valid = validate(req.body);
+    if (!valid) {
+      res.status(400).json({
+        error: "Invalide : l'un des champs est mal rempli",
+      });
+      console.log(validate.errors);
+    } else {
+      next();
+    }
   }
 };
