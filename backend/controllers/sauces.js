@@ -18,7 +18,7 @@ exports.createSauce = (req, res, next) => {
       .save()
       .then(() => res.status(201).json({ message: "Sauce enregistrée !" }))
       .catch((error) => {
-        res.status(400).json({ message: error });
+        res.status(400).json({ message: error.message });
       });
   } else {
     res.status(401).json({ error: "userId non valable" });
