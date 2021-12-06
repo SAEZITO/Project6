@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const config = require("./config.js");
+const mongoSanitize = require("express-mongo-sanitize");
 
 const userRoutes = require("./routes/user");
 const saucesRoutes = require("./routes/sauces");
@@ -35,6 +36,8 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use("/images", express.static(path.join(__dirname, "images")));
+// Pour éviter l'injection de code dans MongoDB
+app.use(mongoSanitize());
 
 app.use("/api/auth", userRoutes);
 app.use("/api/sauces", saucesRoutes);
